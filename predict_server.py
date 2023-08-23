@@ -12,4 +12,4 @@ async def root():
 @app.get("/predict/{place}")
 async def predict(place: str):
     print("Hello")
-    return pcp.predict(place)
+    return pcp.predict(place.replace("+", " "))
