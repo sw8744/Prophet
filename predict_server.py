@@ -1,15 +1,14 @@
-from fastapi import FastAPI
 import people_count_predict as pcp
+from flask import Flask
 
-app = FastAPI()
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+app = Flask(__name__)
 
 
-@app.get("/predict/{place}")
-async def predict(place: str):
-    print("Hello")
+@app.route("/")
+def hello():
+    return {"message": "Hello World!"}
+
+
+@app.route("/predict/<str:place>")
+def predict(place: str):
     return pcp.predict(place.replace("+", " "))
