@@ -11,7 +11,8 @@ def hello():
 
 @app.route("/predict/<place>")
 def predict(place):
-    return jsonify(pcp.predict(place.replace("+", " ")))
+    result = pcp.predict(place.replace("+", " "))
+    return jsonify({"result": result})
 
 
 if __name__ == "__main__":
