@@ -1,19 +1,20 @@
+from fastapi import FastAPI
 import people_count_predict as pcp
-from flask import Flask, jsonify
 
-app = Flask(__name__)
-
-
-@app.route("/")
-def hello():
-    return jsonify({"message": "Hello World!"})
+app = FastAPI()
 
 
-@app.route("/predict/<place>")
-def predict(place):
-    result = pcp.predict(place.replace("+", " "))
-    return jsonify({"result": result})
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+
+@app.get("/predict/{place}")
+async def predict(place: str):
+    print("Hello")
+    return pcp.predict(place.replace("+", " "))
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
