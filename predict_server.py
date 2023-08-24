@@ -9,8 +9,8 @@ def hello():
     return jsonify({"message": "Hello World!"})
 
 
-@app.route("/predict/<str:place>")
-def predict(place: str):
+@app.route("/predict/<place>")
+def predict(place):
     return jsonify(pcp.predict(place.replace("+", " ")))
 
 
