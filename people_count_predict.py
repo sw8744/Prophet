@@ -1,5 +1,5 @@
 import json
-from fbprophet import Prophet
+from prophet import Prophet
 from pandas import DataFrame
 import logging
 import requests
