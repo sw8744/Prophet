@@ -1,7 +1,7 @@
-from fbprophet import Prophet
-from fbprophet.diagnostics import cross_validation
-from fbprophet.diagnostics import performance_metrics
-from fbprophet.plot import plot_cross_validation_metric
+from prophet import Prophet
+from prophet.diagnostics import cross_validation
+from prophet.diagnostics import performance_metrics
+from prophet.plot import plot_cross_validation_metric
 from pandas import DataFrame
 import logging
 import pandas as pd
@@ -37,7 +37,7 @@ def predict_wave_height():
         'ds': create_date_list(),
         'y': wave_height
     })
-    prophet = Prophet(changepoint_prior_scale=0.15, daily_seasonality=True)
+    prophet = Prophet(changepoint_prior_scale=0.05, daily_seasonality=True)
     prophet.fit(dataframe)
     future = prophet.make_future_dataframe(periods=24 * 30, freq="H")
     forecast = prophet.predict(future)
@@ -55,6 +55,7 @@ def predict_wave_height():
     performance_metrics_results = performance_metrics(cross_validation_results)
     print(performance_metrics_results)
     plot_cross_validation_metric(cross_validation_results, metric='mape')
+    plt.ylim(0, 5)
     plt.show()
 
 
