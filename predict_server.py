@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import people_count_predict as pcp
 from fastapi.middleware.cors import CORSMiddleware
 import update_db as udb
+import multiprocessing as mp
 
 app = FastAPI()
 
@@ -27,7 +28,9 @@ async def predict(place: str):
 
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-    udb.update()
-    pcp.update()
+    p1 = mp.Process(target=udb.update)
+    p1.start()
+    p2 = mp.Process(target=pcp.update)
+    p2.start()
+    p3 = mp.Process(target=uvicorn.run, args=(app, "0.0.0.0", 8000))
+    p3.start()
