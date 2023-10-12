@@ -23,7 +23,7 @@ def update_db():
         conn.commit()
 
 
-if __name__ == '__main__':
+def update():
     schedule.every(5).minutes.do(update_db)
     while True:
         schedule.run_pending()

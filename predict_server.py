@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import people_count_predict as pcp
 from fastapi.middleware.cors import CORSMiddleware
+import update_db as udb
 
 app = FastAPI()
 
@@ -11,6 +12,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+udb.update()
 
 
 @app.get("/")
