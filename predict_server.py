@@ -32,5 +32,4 @@ if __name__ == "__main__":
     p1.start()
     p2 = mp.Process(target=pcp.update)
     p2.start()
-    p3 = mp.Process(target=uvicorn.run, args=(app, "0.0.0.0", 8000))
-    p3.start()
+    uvicorn.run(app, host="0.0.0.0", port=8000)
