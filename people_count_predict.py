@@ -7,6 +7,7 @@ import pandas as pd
 from datetime import datetime
 import schedule
 import time
+import update_db as udb
 
 logger = logging.getLogger('cmdstanpy')
 logger.addHandler(logging.NullHandler())
@@ -25,28 +26,20 @@ AREA_SIZE = df['AREA_SIZE'].tolist()
 
 def init_people_data(key: str):
     global people_data
-    file_path = "./ppldata.json"
-    json_data = {}
     ppl_list = []
     day_list = []
-    with open(file_path, "r", encoding='UTF-8') as json_file:
-        json_data = json.load(json_file)
-    for t in json_data[key]:
-        max_ppl = int(json_data[key][t]["PPL_MAX"])
-
-        min_ppl = int(json_data[key][t]["PPL_MIN"])
+    for ppl_data in udb.get_data(key):
+        max_ppl = ppl_data[3]
+        min_ppl = ppl_data[2]
         ppl_mean = (max_ppl + min_ppl) / 2
         ppl_list.append(ppl_mean)
-        day_list.append(t)
+        day_list.append(ppl_data[1].strftime("%Y-%m-%d %H:%M:%S"))
         data = {
             "ds": day_list,
             "y": ppl_list
         }
         people_data[key] = DataFrame(data)
     print("done")
-
-
-print("Done")
 
 
 def update_people_data(place, time, amount):
