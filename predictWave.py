@@ -54,7 +54,7 @@ def predict_wave_height():
     print(cross_validation_results)
     performance_metrics_results = performance_metrics(cross_validation_results)
     print(performance_metrics_results)
-    plot_cross_validation_metric(cross_validation_results, metric='mape')
+    plot_cross_validation_metric(cross_validation_results, metric='smape')
     plt.ylim(0, 5)
     plt.show()
 
