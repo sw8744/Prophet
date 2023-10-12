@@ -6,8 +6,7 @@ import json
 from datetime import datetime
 import people_count_predict as pcp
 
-conn = pymysql.connect(host="ishs.co.kr", user="root", password="ishs123!", db="kcf", charset="utf8")
-curs = conn.cursor()
+
 
 
 def update_db():
@@ -35,8 +34,3 @@ def get_data(place):
     curs.execute(f"SELECT * FROM people WHERE place_name='{place}'")
     rows = curs.fetchall()
     return rows
-
-
-if __name__ == "__main__":
-    update()
-    # print(get_data("종로구"))
