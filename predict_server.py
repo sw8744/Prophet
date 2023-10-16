@@ -22,9 +22,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+q = mp.Queue()
+
 conn = pymysql.connect(host="ishs.co.kr", user="root", password="ishs123!", db="kcf", charset="utf8")
 curs = conn.cursor()
-
 
 logger = logging.getLogger('cmdstanpy')
 logger.addHandler(logging.NullHandler())
@@ -119,34 +120,14 @@ def predict(place):
     return predict_data[place]
 
 
-def predict_all():
+def predict_all(q):
     for place in AREA_NM:
         predict(place)
+    q.put(predict_data)
 
 
-def update_predict():
-    schedule.every(5).minutes.do(predict_all)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
-
-
-def update_db():
-    global conn, curs
-    for place in AREA_NM:
-        host = f"http://openapi.seoul.go.kr:8088/4e574f4441796f7537316758474875/json/citydata_ppltn/1/5/{AREA_CD[AREA_NM.index(place)]}"
-        res = requests.get(host)
-        data = json.loads(res.text)
-        AREA_PPLTN_MIN = data['SeoulRtd.citydata_ppltn'][0]['AREA_PPLTN_MIN']
-        AREA_PPLTN_MAX = data['SeoulRtd.citydata_ppltn'][0]['AREA_PPLTN_MAX']
-        t = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        curs.execute(f"INSERT INTO people VALUES ('{place}', '{t}', {AREA_PPLTN_MIN}, {AREA_PPLTN_MAX})")
-        conn.commit()
-        update_people_data(place, t, (int(AREA_PPLTN_MIN) + int(AREA_PPLTN_MAX)) // 2)
-
-
-def update_mysql():
-    schedule.every(5).minutes.do(update_db)
+def update_predict(q):
+    schedule.every(5).minutes.do(predict_all, q=q)
     while True:
         schedule.run_pending()
         time.sleep(1)
@@ -157,6 +138,7 @@ def get_data(place):
     rows = curs.fetchall()
     return rows
 
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -165,13 +147,12 @@ async def root():
 @app.get("/predict/{place}")
 async def predict(place: str):
     print("Hello")
-    return predict_data[place.replace("+", " ")]
+    placename = place.replace("+", " ")
+    return q.get()[placename]
 
 
 if __name__ == "__main__":
     import uvicorn
-    p1 = mp.Process(target=update_mysql)
-    p1.start()
-    p2 = mp.Process(target=update_predict)
+    p2 = mp.Process(target=update_predict, args=(q,))
     p2.start()
     uvicorn.run(app, host="0.0.0.0", port=8000)

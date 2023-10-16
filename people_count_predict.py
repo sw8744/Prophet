@@ -7,7 +7,11 @@ import pandas as pd
 from datetime import datetime
 import schedule
 import time
-import update_db as udb
+import pymysql
+
+
+conn = pymysql.connect(host="ishs.co.kr", user="root", password="ishs123!", db="kcf", charset="utf8")
+curs = conn.cursor()
 
 logger = logging.getLogger('cmdstanpy')
 logger.addHandler(logging.NullHandler())
@@ -24,11 +28,17 @@ AREA_NM = df['AREA_NM'].tolist()
 AREA_SIZE = df['AREA_SIZE'].tolist()
 
 
+def get_data(place):
+    curs.execute(f"SELECT * FROM people WHERE place_name='{place}'")
+    rows = curs.fetchall()
+    return rows
+
+
 def init_people_data(key: str):
     global people_data
     ppl_list = []
     day_list = []
-    for ppl_data in udb.get_data(key):
+    for ppl_data in get_data(key):
         max_ppl = ppl_data[3]
         min_ppl = ppl_data[2]
         ppl_mean = (max_ppl + min_ppl) / 2

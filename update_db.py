@@ -7,6 +7,8 @@ from datetime import datetime
 import people_count_predict as pcp
 
 
+conn = pymysql.connect(host="ishs.co.kr", user="root", password="ishs123!", db="kcf", charset="utf8")
+curs = conn.cursor()
 
 
 def update_db():
@@ -20,7 +22,6 @@ def update_db():
         t = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         curs.execute(f"INSERT INTO people VALUES ('{place}', '{t}', {AREA_PPLTN_MIN}, {AREA_PPLTN_MAX})")
         conn.commit()
-        pcp.update_people_data(place, t, (int(AREA_PPLTN_MIN) + int(AREA_PPLTN_MAX)) // 2)
 
 
 def update():
@@ -34,3 +35,7 @@ def get_data(place):
     curs.execute(f"SELECT * FROM people WHERE place_name='{place}'")
     rows = curs.fetchall()
     return rows
+
+
+if __name__ == "__main__":
+    update()
