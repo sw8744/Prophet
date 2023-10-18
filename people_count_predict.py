@@ -89,7 +89,7 @@ def predict_people_count(place):
 def send(placeNM):
     host = f"http://openapi.seoul.go.kr:8088/4e574f4441796f7537316758474875/json/citydata_ppltn/1/5/{AREA_CD[AREA_NM.index(placeNM)]}"
     res = requests.get(host)
-    # print(res.text)
+    print(res.text)
     data = json.loads(res.text)
     AREA_PPLTN_MIN = data['SeoulRtd.citydata_ppltn'][0]['AREA_PPLTN_MIN']
     AREA_PPLTN_MAX = data['SeoulRtd.citydata_ppltn'][0]['AREA_PPLTN_MAX']
@@ -115,10 +115,3 @@ def predict(place):
 def predict_all():
     for place in AREA_NM:
         predict(place)
-
-
-def update():
-    schedule.every(5).minutes.do(predict_all)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)

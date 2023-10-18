@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import multiprocessing as mp
 import pymysql
 import schedule
 import time
@@ -11,6 +10,7 @@ from prophet import Prophet
 from pandas import DataFrame
 import logging
 import pandas as pd
+import threading
 
 app = FastAPI()
 
@@ -21,8 +21,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-q = mp.Queue()
 
 conn = pymysql.connect(host="ishs.co.kr", user="root", password="ishs123!", db="kcf", charset="utf8")
 curs = conn.cursor()
@@ -57,7 +55,6 @@ def init_people_data(key: str):
             "y": ppl_list
         }
         people_data[key] = DataFrame(data)
-    print("done")
 
 
 def update_people_data(place, time, amount):
@@ -109,7 +106,8 @@ def send(placeNM):
     }
 
 
-def predict(place):
+def predict_people(place):
+    global predict_data
     if place not in people_data:
         init_people_data(place)
     people = send(place)
@@ -120,17 +118,9 @@ def predict(place):
     return predict_data[place]
 
 
-def predict_all(q):
+def predict_all():
     for place in AREA_NM:
-        predict(place)
-    q.put(predict_data)
-
-
-def update_predict(q):
-    schedule.every(5).minutes.do(predict_all, q=q)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+        predict_people(place)
 
 
 def get_data(place):
@@ -140,19 +130,36 @@ def get_data(place):
 
 
 @app.get("/")
-async def root():
+def root():
     return {"message": "Hello World"}
+
+
+@app.get("/predict/all")
+async def get_predict_all():
+    return predict_data
 
 
 @app.get("/predict/{place}")
 async def predict(place: str):
-    print("Hello")
     placename = place.replace("+", " ")
-    return q.get()[placename]
+    if placename not in predict_data:
+        return predict_people(placename)
+    return predict_data[placename]
+
+def run_threaded(job_func):
+    job_thread = threading.Thread(target=job_func)
+    job_thread.start()
+
+
+def run_schedule():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 
 if __name__ == "__main__":
     import uvicorn
-    p2 = mp.Process(target=update_predict, args=(q,))
-    p2.start()
+    schedule.every(5).minutes.do(run_threaded, predict_all)
+    p1 = threading.Thread(target=run_schedule)
+    p1.start()
     uvicorn.run(app, host="0.0.0.0", port=8000)
