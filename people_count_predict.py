@@ -26,6 +26,7 @@ df = pd.read_csv('./places.csv')
 AREA_CD = df['AREA_CD'].tolist()
 AREA_NM = df['AREA_NM'].tolist()
 AREA_SIZE = df['AREA_SIZE'].tolist()
+ADDRESS = df['ADDRESS'].tolist()
 
 
 def get_data(place):
