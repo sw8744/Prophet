@@ -30,7 +30,7 @@ def update_place():
 def register_place(place):
     lat, lng = get_lat_lng(place)
     size = pcp.AREA_SIZE[pcp.AREA_NM.index(place)]
-    host = f"http://localhost:8000/register"
+    host = f"http://app.ishs.co.kr:5000/register"
     data = {
         "API_KEY": "HelloWorld",
         "place_data": [
@@ -43,7 +43,7 @@ def register_place(place):
             }
         ]
     }
-    res = requests.post(host, json=data)
+    res = requests.patch(host, json=data)
     print(res.text)
 
 
@@ -62,7 +62,7 @@ def get_lat_lng(place):
     res = requests.get(host, headers=headers)
     data = json.loads(res.text)
     print(data)
-    return data['addresses'][0]['x'], data['addresses'][0]['y']
+    return data['addresses'][0]['y'], data['addresses'][0]['x']
 
 
 def update():
@@ -74,4 +74,5 @@ def update():
 
 
 if __name__ == "__main__":
-    update()
+    for place in pcp.AREA_NM:
+        register_place(place)
