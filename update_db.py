@@ -5,7 +5,6 @@ import json
 from datetime import datetime
 import people_count_predict as pcp
 
-
 def update_place():
     data = {
         "API_KEY": "HelloWorld",

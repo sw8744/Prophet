@@ -67,11 +67,11 @@ def predict_people_count(place):
     prophet = Prophet(changepoint_prior_scale=0.15, daily_seasonality=True)
     prophet.fit(people_data[place])
 
-    fcast_time = 13
-    future = prophet.make_future_dataframe(periods=fcast_time, freq="5T")
-    print(future.tail(13))
+    fcast_time = 7
+    future = prophet.make_future_dataframe(periods=fcast_time, freq="10T")
+    print(future.tail(7))
 
-    forecast = prophet.predict(future).tail(13)
+    forecast = prophet.predict(future).tail(7)
 
     forecast_data = {
         'ds': forecast['ds'],
