@@ -10,7 +10,7 @@ import time
 import pymysql
 
 
-conn = pymysql.connect(host="ishs.co.kr", user="root", password="ishs123!", db="kcf", charset="utf8")
+conn = pymysql.connect(host="app.ishs.co.kr", user="root", password="ishs12345!", db="placedata", charset="utf8")
 curs = conn.cursor()
 
 logger = logging.getLogger('cmdstanpy')
@@ -26,6 +26,7 @@ df = pd.read_csv('./places.csv')
 AREA_CD = df['AREA_CD'].tolist()
 AREA_NM = df['AREA_NM'].tolist()
 AREA_SIZE = df['AREA_SIZE'].tolist()
+ADDRESS = df['ADDRESS'].tolist()
 
 
 def get_data(place):
@@ -66,11 +67,11 @@ def predict_people_count(place):
     prophet = Prophet(changepoint_prior_scale=0.15, daily_seasonality=True)
     prophet.fit(people_data[place])
 
-    fcast_time = 13
-    future = prophet.make_future_dataframe(periods=fcast_time, freq="5T")
-    print(future.tail(13))
+    fcast_time = 7
+    future = prophet.make_future_dataframe(periods=fcast_time, freq="10T")
+    print(future.tail(7))
 
-    forecast = prophet.predict(future).tail(13)
+    forecast = prophet.predict(future).tail(7)
 
     forecast_data = {
         'ds': forecast['ds'],
