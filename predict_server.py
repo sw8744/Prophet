@@ -22,7 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-conn = pymysql.connect(host="ishs.co.kr", user="root", password="ishs123!", db="kcf", charset="utf8")
+conn = pymysql.connect(host="app.ishs.co.kr", user="", password="", db="people", charset="utf8")
 curs = conn.cursor()
 
 logger = logging.getLogger('cmdstanpy')
@@ -71,11 +71,10 @@ def predict_people_count(place):
     prophet = Prophet(changepoint_prior_scale=0.15, daily_seasonality=True)
     prophet.fit(people_data[place])
 
-    fcast_time = 13
-    future = prophet.make_future_dataframe(periods=fcast_time, freq="5T")
-    print(future.tail(13))
+    fcast_time = 7
+    future = prophet.make_future_dataframe(periods=fcast_time, freq="10T")
 
-    forecast = prophet.predict(future).tail(13)
+    forecast = prophet.predict(future).tail(7)
 
     forecast_data = {
         'ds': forecast['ds'],
@@ -85,9 +84,8 @@ def predict_people_count(place):
     }
 
     forecast_df = DataFrame(forecast_data)
-    print(forecast_df)
     forecast_json = forecast_df.to_json(orient='columns')
-    print(forecast_json)
+    print("success")
     return forecast_data
 
 
@@ -98,7 +96,6 @@ def send(placeNM):
     data = json.loads(res.text)
     AREA_PPLTN_MIN = data['SeoulRtd.citydata_ppltn'][0]['AREA_PPLTN_MIN']
     AREA_PPLTN_MAX = data['SeoulRtd.citydata_ppltn'][0]['AREA_PPLTN_MAX']
-    print(f"{placeNM}의 현재 인구는 {AREA_PPLTN_MIN} ~ {AREA_PPLTN_MAX}명 입니다.")
     return {
         "AREA_NM": placeNM,
         "AREA_PPLTN_MIN": int(AREA_PPLTN_MIN),
