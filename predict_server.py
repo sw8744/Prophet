@@ -111,7 +111,6 @@ def predict_people(place):
     t = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     update_people_data(place, t, (people['AREA_PPLTN_MIN'] + people['AREA_PPLTN_MAX']) // 2)
     predict_data[place] = predict_people_count(place)
-    print(predict_data[place])
     return predict_data[place]
 
 
