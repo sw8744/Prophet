@@ -56,7 +56,7 @@ def get_lat_lng(place):
     host = f"https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query={address}"
     headers = {
         "X-NCP-APIGW-API-KEY-ID": "lxivhwxb5e",
-        "X-NCP-APIGW-API-KEY": "AtlzDVhNTZA7Ecin4rwoxQCbKqr8m0B3CYUYyGMU"
+        "X-NCP-APIGW-API-KEY": "GuvLMeb1smkKT0aui75N7QyOXe6Hjd2lqwIo9GcZ"
     }
     res = requests.get(host, headers=headers)
     data = json.loads(res.text)
