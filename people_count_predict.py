@@ -10,7 +10,7 @@ import time
 import pymysql
 
 
-conn = pymysql.connect(host="app.ishs.co.kr", user="root", password="ishs12345!", db="placedata", charset="utf8")
+conn = pymysql.connect(host="jrh-ishs.kro.kr", user="jrh", password="ishs12345!", db="placedata", charset="utf8")
 curs = conn.cursor()
 
 logger = logging.getLogger('cmdstanpy')

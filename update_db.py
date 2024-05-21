@@ -29,7 +29,7 @@ def update_place():
 def register_place(place):
     lat, lng = get_lat_lng(place)
     size = pcp.AREA_SIZE[pcp.AREA_NM.index(place)]
-    host = f"http://app.ishs.co.kr:5000/register"
+    host = f"http://jrh-ishs.kro.kr:5000/register"
     data = {
         "API_KEY": "HelloWorld",
         "place_data": [

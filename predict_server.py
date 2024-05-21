@@ -22,7 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-conn = pymysql.connect(host="app.ishs.co.kr", user="", password="", db="people", charset="utf8")
+conn = pymysql.connect(host="jrh-ishs.kro.kr", user="jrh", password="ishs12345!", db="people", charset="utf8")
 curs = conn.cursor()
 
 logger = logging.getLogger('cmdstanpy')
